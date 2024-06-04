@@ -1,0 +1,121 @@
+ans.1) Hardhat and Truffle are both development framework for Ethereum,but they have different features and use cases. Here are the key differences:
+       1. - Development Environment and Tooling:
+            Hardhat - offers a flexible and extensible environment with a focus on developer experience.it includes built-in tools like a local Ethereum network for deploying, testing,debugging and task management
+            Truffle - provides a suite of tools for ehtereum development,including compliation,linking,deployment and binary management.Truffle integrates with Ganache,it's own personal blockchain for ehtereum development.
+       2. - Configuration :
+            Hardhat -Uses JavaScripts or TypeScript for configuration,making it highly customizable. the configuration is done in a single hardhat config.js file.
+            Truffle - uses a more declarative approach with a truffle-config.js file for project configuration.It is simpler but less flexible compared to hardhat.
+       3. - Plugins and Extensibility:
+            Hardhat - has a rich plugin ecosystem,allowing developers to extend functionalties easily. 
+            Truffle - Also support plugins but is gernarally less modular than hardhat.
+       4. - Testing:
+            Hardhat - supports JavaScript anf TypeScript for testing and intgrates well with other testing frameworks like Mocha and Chai.
+            Truffle - Primarily uses JavaScripts for testing with built-in support for Mocha and Chai.
+       5. - Debugging :
+            Hardhat - Known for its advanced debugging capabilities, including a built-in debugger and the hardhat network that can snapshot and revert the state of the blockchain.
+            Truffle - provides a debugger, but it is less advanced compared to hardhat's tools.
+
+
+ans2. ) The steps to compile this contract using hardhat:
+        1. Initialize a New Hardhat Project :Open a terminal, create a new directiory with the name of hardhat-project and navigate into it. Run npx hardhat and follow the prompts to create a basic sample project.
+        2. Install Hardhat : for installing hardhat run npm install --save-dev hardhat.
+        3. Write your smart contract : save the above silidity code in  file named token.js inside the contracts directory of your Hardhat project.
+           
+// SPDX-License-Identifier: MIT
+
+//Solidity files have to start with this pragma.
+//It will be used by the Solidity complier to vaildate its version.
+
+pragma solidity ^0.8.19;
+
+// This is the main building block for smart contracts.
+contract Token {
+    // Some string type variables to identify the token.
+    string public name = "My Hardhat Token";
+    string public symbol = "MHT";
+
+    // The fixed amount of tokens, stored in an unsigned integer type  variable.
+    uint256 public totalSupply = 1000000;
+    //An address type variable  is used to store ethereum accounts.
+    address public owner;
+
+    //A mapping is a key/value map. here we store each account's balance.
+    mapping(address => uint256) balances;
+
+    // The Transfer event helps off-chain applications understand 
+    // what happens within your contract.
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+
+    /**
+    *Contract intialization.
+     */
+
+constructor(){
+    // The totalSupply is assigned to the transaction sender, which is the 
+    // account that is deploying the contract.
+    balances[msg.sender] = totalSupply;
+    owner = msg.sender;
+
+    }
+
+    /**
+    * A function to transfer tokens.
+    *
+    *The `external` modifier makes a function *only* callable form *outside*
+    * the contract.
+     */
+function transfer(address to, uint256 amount) external {
+    
+    //check if the transaction sender has enough tokens.
+    // If `require`'s first argument evaluates to `false` then the
+    // transaction will revert.
+    require(balances[msg.sender] >= amount, "Not enough tokens");
+
+    // Transfer the amount.
+    balances[msg.sender] -= amount;
+    balances[to] += amount;
+
+    //Notify off-chain applications of the transfer.
+    emit Transfer(msg.sender, to, amount);
+    } 
+
+    /**
+   * Read only function to retrieve the token balance of a given account.
+   *
+   * The `view` modifier indicates that it doesn't modify the contract's
+   *state, which allows us to call it without executing a transaction.
+    */
+function balanceOf(address account) external view returns (uint256) {
+    return balances[account];
+    
+    }     
+}  
+
+
+
+
+        4. configure Hardhat : open hardhat.config.js in project root directory. ensure it's configured for the solidity version of contract.
+
+require("@nomicfoundation/hardhat-toolbox");
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: "0.8.24",
+};
+        5. Compile the contract : Run npx hardhat compile in terminal. hardhat will compile your contracts and generates aritifacts(like ABI and bytecodes) in the aritifacts directory.
+        6. Check Compilation Output : After successful compilation, you should see output indication the creation of new files in the artifacts directory.
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
